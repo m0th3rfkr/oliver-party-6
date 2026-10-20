@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="page.title">Fiesta de Alberca Paw Patrol de Oliver</title>
+  <meta name="description" content="¡Oliver cumple 6! Ven a la fiesta de alberca con los cachorros.">
+  <meta property="og:title" content="Fiesta de Alberca Paw Patrol de Oliver 🐾">
+  <meta property="og:description" content="¡Oliver cumple 6! ¡Cachorros, cachorras, a chapotear!">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Luckiest+Guy&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue: #1e63d6;
+      --deep: #0d3f9e;
+      --sky: #7cc8ff;
+      --pool: #3fb6ff;
+      --red: #e8312f;
+      --red-dark: #a31f1d;
+      --yellow: #ffcf26;
+      --white: #ffffff;
+      --ink: #12306b;
+      --display: "Luckiest Guy", "Trebuchet MS", system-ui, sans-serif;
+      --body: "Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--body);
+      color: var(--ink);
+      background: linear-gradient(180deg, #d9f1ff 0%, var(--sky) 45%, var(--pool) 100%);
+      min-height: 100vh;
+      text-align: center;
+      overflow-x: hidden;
+    }
+
+    /* ---------- Hero ---------- */
+    header {
+      position: relative;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.18) 0 60px, transparent 61px),
+        radial-gradient(circle at 85% 35%, rgba(255,255,255,0.12) 0 90px, transparent 91px),
+        linear-gradient(180deg, var(--deep), var(--blue));
+      color: var(--white);
+      padding: 40px 16px 120px;
+      overflow: hidden;
+    }
+    .badge {
+      display: block;
+      width: clamp(170px, 42vw, 260px);
+      height: auto;
+      margin: 0 auto;
+      filter: drop-shadow(0 8px 0 rgba(0,0,0,0.22));
+    }
+    .swimmer {
+      position: absolute;
+      right: max(4%, calc(50% - 460px));
+      bottom: 22px;
+      width: auto;
+      height: clamp(120px, 24vw, 230px);
+      z-index: 1;
+      filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.25));
+    }
+    .kicker {
+      font-family: var(--display);
+      letter-spacing: 2px;
+      color: var(--yellow);
+      font-size: 1.2rem;
+      margin: 22px 0 0;
+    }
+    h1 {
+      font-family: var(--display);
+      font-weight: normal;
+      font-size: clamp(2.6rem, 11vw, 5.2rem);
+      line-height: 0.95;
+      margin: 8px 0 12px;
+      text-shadow: 4px 4px 0 var(--red), 8px 8px 0 rgba(0,0,0,0.18);
+    }
+    header .tag { font-size: 1.35rem; margin: 0; font-weight: 700; }
+    .age {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+      background: var(--red);
+      color: var(--white);
+      font-family: var(--display);
+      font-size: 1.6rem;
+      padding: 10px 26px 6px;
+      border-radius: 999px;
+      border-bottom: 5px solid var(--red-dark);
+      transform: rotate(-3deg);
+    }
+    .age b {
+      display: inline-grid;
+      place-items: center;
+      width: 52px;
+      height: 52px;
+      margin-top: -4px;
+      background: var(--yellow);
+      color: var(--ink);
+      border-radius: 50%;
+      font-size: 2.2rem;
+      font-weight: normal;
+    }
+
+    .waves {
+      position: absolute;
+      left: 0;
+      bottom: -1px;
+      width: 200%;
+      height: 90px;
+    }
+    .waves path:nth-child(1) { fill: rgba(124, 200, 255, 0.55); }
+    .waves path:nth-child(2) { fill: #d9f1ff; }
+
+    .bubbles { position: absolute; inset: 0; pointer-events: none; }
+    .bubbles span {
+      position: absolute;
+      bottom: -40px;
+      width: var(--s);
+      height: var(--s);
+      left: var(--x);
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.6);
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.7), rgba(255,255,255,0.08) 60%);
+      opacity: 0;
+    }
+
+    /* ---------- Countdown ---------- */
+    .countdown {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: -70px auto 0;
+      padding: 0 16px;
+      position: relative;
+      z-index: 1;
+    }
+    .countdown[hidden] { display: none; }
+    .tick {
+      background: var(--white);
+      border: 4px solid var(--blue);
+      border-radius: 18px;
+      min-width: 72px;
+      padding: 8px 6px 4px;
+      box-shadow: 0 6px 0 rgba(18, 48, 107, 0.18);
+    }
+    .tick b { display: block; font-family: var(--display); font-size: 2rem; color: var(--red); line-height: 1.1; font-weight: normal; }
+    .tick small { font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+
+    /* ---------- Cards ---------- */
+    main { max-width: 760px; margin: 0 auto; padding: 24px 16px 32px; }
+    .card {
+      position: relative;
+      background: var(--white);
+      border: 4px solid var(--blue);
+      border-radius: 28px;
+      padding: 28px 22px 24px;
+      margin: 28px 0;
+      box-shadow: 0 8px 0 rgba(18, 48, 107, 0.18);
+    }
+    .card .icon {
+      position: absolute;
+      top: -26px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 52px;
+      height: 52px;
+      display: grid;
+      place-items: center;
+      font-size: 1.6rem;
+      background: var(--yellow);
+      border: 4px solid var(--blue);
+      border-radius: 50%;
+    }
+    .card h2 {
+      font-family: var(--display);
+      font-weight: normal;
+      letter-spacing: 1px;
+      margin: 8px 0 16px;
+      color: var(--red);
+      font-size: clamp(1.6rem, 6vw, 2.1rem);
+    }
+    .card p { font-size: 1.2rem; font-weight: 600; margin: 0 0 18px; }
+    .details { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+    .detail {
+      background: #eef7ff;
+      border-radius: 18px;
+      padding: 14px 10px;
+    }
+    .detail strong { display: block; font-size: 1.05rem; color: var(--blue); }
+    .detail span { font-size: 1.25rem; font-weight: 700; }
+    .map-link { display: inline-block; margin-top: 16px; color: var(--blue); font-weight: 700; font-size: 1.1rem; }
+
+    .chips { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .chips li {
+      background: #eef7ff;
+      border: 3px solid var(--sky);
+      border-radius: 999px;
+      padding: 8px 18px;
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .missions { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; text-align: left; }
+    .missions li {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: #fff7d6;
+      border-radius: 18px;
+      padding: 12px 16px;
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+    .missions .n {
+      flex: none;
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--red);
+      color: var(--white);
+      font-size: 1.4rem;
+    }
+
+    .btn {
+      display: inline-block;
+      background: var(--red);
+      color: var(--white);
+      font-family: var(--display);
+      letter-spacing: 1px;
+      font-size: 1.4rem;
+      text-decoration: none;
+      padding: 14px 32px 10px;
+      border-radius: 999px;
+      border-bottom: 6px solid var(--red-dark);
+      transition: transform 0.12s;
+    }
+    .btn:hover, .btn:focus-visible { background: #ff4a47; transform: translateY(-2px); }
+    .btn:active { transform: translateY(2px); border-bottom-width: 3px; }
+    .btn.alt { background: var(--blue); border-bottom-color: var(--deep); }
+    .btn.alt:hover, .btn.alt:focus-visible { background: #3378ea; }
+
+    .pups { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 8px 0; }
+    .pups img { display: block; width: clamp(64px, 14vw, 96px); height: auto; }
+    .pups-group { display: block; width: 100%; max-width: 509px; height: auto; margin: 16px auto 0; }
+    footer {
+      background: var(--deep);
+      color: var(--white);
+      padding: 28px 16px 40px;
+      font-family: var(--display);
+      letter-spacing: 1px;
+      font-size: 1.3rem;
+    }
+
+    .lang {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 5;
+      display: flex;
+      padding: 4px;
+      gap: 4px;
+      background: var(--white);
+      border-radius: 999px;
+      box-shadow: 0 4px 0 rgba(18, 48, 107, 0.25);
+    }
+    .lang button {
+      border: 0;
+      border-radius: 999px;
+      padding: 6px 12px 3px;
+      background: transparent;
+      color: var(--ink);
+      font-family: var(--display);
+      font-size: 1rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+    }
+    .lang button:hover, .lang button:focus-visible { background: #eef7ff; }
+    .lang button[aria-pressed="true"] { background: var(--red); color: var(--white); }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .badge { animation: bob 2.4s ease-in-out infinite; }
+      .age { animation: wiggle 3s ease-in-out infinite; }
+      .waves { animation: drift 9s linear infinite; }
+      .bubbles span { animation: rise var(--d) linear var(--delay) infinite; }
+      .swimmer { animation: float 3.2s ease-in-out infinite; }
+      .pups span { display: inline-block; animation: hop 1.6s ease-in-out infinite; }
+      .pups span:nth-child(2) { animation-delay: 0.15s; }
+      .pups span:nth-child(3) { animation-delay: 0.3s; }
+      .pups span:nth-child(4) { animation-delay: 0.45s; }
+      .pups span:nth-child(5) { animation-delay: 0.6s; }
+      .pups span:nth-child(6) { animation-delay: 0.75s; }
+      @keyframes bob { 50% { transform: translateY(-10px) rotate(-6deg); } }
+      @keyframes wiggle { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg) scale(1.04); } }
+      @keyframes drift { to { transform: translateX(-50%); } }
+      @keyframes rise {
+        10% { opacity: 1; }
+        100% { transform: translateY(-560px) translateX(20px); opacity: 0; }
+      }
+      @keyframes float { 50% { transform: translateY(-8px) rotate(4deg); } }
+      @keyframes hop { 50% { transform: translateY(-10px); } }
+    }
+  </style>
+</head>
+<body>
+  <div class="lang" role="group" aria-label="Idioma / Language">
+    <button type="button" data-lang="es">ES</button>
+    <button type="button" data-lang="en">EN</button>
+  </div>
+
+  <header>
+    <div class="bubbles" aria-hidden="true">
+      <span style="--x:8%;  --s:18px; --d:7s;  --delay:0s"></span>
+      <span style="--x:22%; --s:30px; --d:9s;  --delay:2s"></span>
+      <span style="--x:41%; --s:14px; --d:6s;  --delay:1s"></span>
+      <span style="--x:60%; --s:26px; --d:8s;  --delay:3s"></span>
+      <span style="--x:76%; --s:16px; --d:7s;  --delay:0.5s"></span>
+      <span style="--x:90%; --s:34px; --d:10s; --delay:4s"></span>
+    </div>
+
+    <img class="badge" src="img/paw-patrol-logo.png" alt="Paw Patrol" width="600" height="517">
+    <p class="kicker" data-i18n="hero.kicker">¡Paw Patrol, en acción!</p>
+    <h1 data-i18n-html="hero.title">Oliver's<br>Pool Party!</h1>
+    <p class="tag" data-i18n="hero.tag">¡Cachorros, cachorras, a chapotear! 💦</p>
+    <div class="age" data-i18n-html="hero.age">Oliver cumple <b>6</b></div>
+
+    <img class="swimmer" src="img/marshall.png" alt="" width="630" height="929">
+
+    <svg class="waves" viewBox="0 0 2400 90" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 40 Q150 0 300 40 T600 40 T900 40 T1200 40 T1500 40 T1800 40 T2100 40 T2400 40 V90 H0Z"/>
+      <path d="M0 60 Q150 25 300 60 T600 60 T900 60 T1200 60 T1500 60 T1800 60 T2100 60 T2400 60 V90 H0Z"/>
+    </svg>
+  </header>
+
+  <!-- Set data-party to the real start time (local), e.g. 2026-11-07T12:00 -->
+  <div id="countdown" class="countdown" data-party="2026-11-07T12:00" hidden aria-label="Tiempo para la fiesta" data-i18n-aria="countdown.label">
+    <div class="tick"><b data-unit="days">0</b><small data-i18n="countdown.days">Días</small></div>
+    <div class="tick"><b data-unit="hours">0</b><small data-i18n="countdown.hours">Horas</small></div>
+    <div class="tick"><b data-unit="minutes">0</b><small data-i18n="countdown.minutes">Min</small></div>
+    <div class="tick"><b data-unit="seconds">0</b><small data-i18n="countdown.seconds">Seg</small></div>
+  </div>
+
+  <main>
+    <section class="card" aria-labelledby="details-h">
+      <div class="icon" aria-hidden="true">📍</div>
+      <h2 id="details-h" data-i18n="details.title">Datos de la Misión</h2>
+      <div class="details">
+        <div class="detail"><strong data-i18n="details.when">📅 Cuándo</strong><span data-i18n="details.date">Sábado 7 de noviembre</span></div>
+        <div class="detail"><strong data-i18n="details.time">⏰ Hora</strong><span>12:00 PM</span></div>
+        <div class="detail"><strong data-i18n="details.where">🏠 Dónde</strong><span>Casahuate 18, Col. Lomas de Cocoyoc</span></div>
+      </div>
+      <a class="map-link" href="https://maps.app.goo.gl/NubrnPqBW6w2zLVp9" target="_blank" rel="noopener" data-i18n="details.map">🗺️ Cómo llegar</a>
+    </section>
+
+    <section class="card" aria-labelledby="bring-h">
+      <div class="icon" aria-hidden="true">🎒</div>
+      <h2 id="bring-h" data-i18n="gear.title">Equipo de Cachorro</h2>
+      <ul class="chips">
+        <li data-i18n="gear.swimsuit">🩳 Traje de baño</li>
+        <li data-i18n="gear.towel">🏖️ Toalla</li>
+        <li data-i18n="gear.sunscreen">🧴 Bloqueador solar</li>
+        <li data-i18n="gear.clothes">👕 Ropa seca</li>
+        <li data-i18n="gear.spirit">🐶 ¡Espíritu de cachorro!</li>
+      </ul>
+    </section>
+
+    <section class="card" aria-labelledby="fun-h">
+      <div class="icon" aria-hidden="true">🚨</div>
+      <h2 id="fun-h" data-i18n="fun.title">Misiones del Día</h2>
+      <ol class="missions">
+        <li><span class="n" aria-hidden="true">🏊</span><span data-i18n="fun.swim">Albercada</span></li>
+        <li><span class="n" aria-hidden="true">🛝</span><span data-i18n="fun.hunt">Resbaladilla inflable</span></li>
+        <li><span class="n" aria-hidden="true">🎂</span><span data-i18n="fun.cake">Pastel y golosinas de cachorro</span></li>
+      </ol>
+    </section>
+
+    <section class="card" aria-labelledby="rsvp-h">
+      <div class="icon" aria-hidden="true">✋</div>
+      <h2 id="rsvp-h" data-i18n="rsvp.title">¿Te unes a la manada?</h2>
+      <p data-i18n="rsvp.text">Por favor confirma tu asistencia a más tardar el miércoles 4 de noviembre y avísanos si hay alguna alergia.</p>
+      <a id="rsvp-link" class="btn" href="https://wa.me/525539018069?text=%C2%A1Hola!%20Quiero%20confirmar%20que%20vamos%20a%20la%20fiesta%20de%20Oliver%20%F0%9F%8E%89" target="_blank" rel="noopener" data-i18n="rsvp.button">Confirma por WhatsApp</a>
+    </section>
+
+    <section class="card" aria-labelledby="gifts-h">
+      <div class="icon" aria-hidden="true">🎁</div>
+      <h2 id="gifts-h" data-i18n="gifts.title">Ideas de Regalo Paw Patrol</h2>
+      <p data-i18n="gifts.text">¿Buscas un regalo para Oliver? Aquí encontrarás ideas de Paw Patrol.</p>
+      <a class="btn" href="https://www.amazon.com.mx/stores/PAWPatrol/page/A81B94D1-1038-4CB5-80AE-4583232F815B" target="_blank" rel="noopener" data-i18n="gifts.button">Ver ideas de regalo</a>
+    </section>
+
+    <section class="card" aria-labelledby="album-h">
+      <div class="icon" aria-hidden="true">📸</div>
+      <h2 id="album-h" data-i18n="albumCard.title">Álbum de la Fiesta</h2>
+      <p data-i18n="albumCard.text">¡Toma fotos y videos en la fiesta y súbelos a nuestra revista digital en vivo!</p>
+      <a class="btn alt" href="album.html" data-i18n="albumCard.button">Abrir la revista</a>
+    </section>
+
+    <div class="pups" aria-hidden="true">
+      <span><img src="img/pup-marshall.png" alt="" width="256" height="256"></span>
+      <span><img src="img/pup-chase.png" alt="" width="256" height="256"></span>
+      <span><img src="img/pup-rubble.png" alt="" width="256" height="256"></span>
+      <span><img src="img/pup-rocky.png" alt="" width="256" height="256"></span>
+      <span><img src="img/pup-zuma.png" alt="" width="256" height="256"></span>
+      <span><img src="img/pup-rex.png" alt="" width="130" height="130"></span>
+    </div>
+    <img class="pups-group" src="img/pups-group.png" alt="Paw Patrol" width="509" height="219">
+  </main>
+
+  <footer data-i18n="footer">¡Ningún trabajo es demasiado grande, ningún cachorro es demasiado pequeño! 🎉</footer>
+
+  <script src="i18n.js?v=4"></script>
+  <script>
+    (function () {
+      const WHATSAPP_NUMBER = '525539018069';
+      const link = document.getElementById('rsvp-link');
+      function updateRsvpLink() {
+        link.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(window.I18N.t('rsvp.message'))}`;
+      }
+      updateRsvpLink();
+      window.I18N.onChange(updateRsvpLink);
+    })();
+
+    (function () {
+      const box = document.getElementById('countdown');
+      const target = new Date(box.dataset.party);
+      if (!box.dataset.party || Number.isNaN(target.getTime())) return;
+
+      const units = {
+        days: box.querySelector('[data-unit="days"]'),
+        hours: box.querySelector('[data-unit="hours"]'),
+        minutes: box.querySelector('[data-unit="minutes"]'),
+        seconds: box.querySelector('[data-unit="seconds"]'),
+      };
+
+      function tick() {
+        const left = Math.max(0, target - Date.now());
+        if (left === 0) {
+          box.innerHTML = '<div class="tick"><b>🎉</b><small data-i18n="countdown.done"></small></div>';
+          window.I18N.apply(box);
+          return;
+        }
+        const s = Math.floor(left / 1000);
+        units.days.textContent = Math.floor(s / 86400);
+        units.hours.textContent = Math.floor(s / 3600) % 24;
+        units.minutes.textContent = Math.floor(s / 60) % 60;
+        units.seconds.textContent = s % 60;
+        setTimeout(tick, 1000);
+      }
+
+      box.hidden = false;
+      tick();
+    })();
+  </script>
+</body>
+</html>
