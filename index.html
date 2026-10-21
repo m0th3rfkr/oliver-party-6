@@ -415,10 +415,6 @@
           <span data-i18n="rsvp.withLabel">¿Con quién viene?</span>
           <input id="rsvp-with" name="with" type="text" autocomplete="off" maxlength="120" placeholder="Ej. mamá, papá y su hermanito" data-i18n-placeholder="rsvp.withPlaceholder">
         </label>
-        <label class="field">
-          <span data-i18n="rsvp.allergiesLabel">¿Alguna alergia? (opcional)</span>
-          <input id="rsvp-allergies" name="allergies" type="text" autocomplete="off" maxlength="120" placeholder="Ej. nueces" data-i18n-placeholder="rsvp.allergiesPlaceholder">
-        </label>
         <p id="rsvp-error" class="field-error" role="alert" hidden data-i18n="rsvp.nameMissing">Escribe el nombre del amig@ de Oliver.</p>
         <button class="btn wa" type="submit" data-i18n="rsvp.button">Confirmar</button>
       </form>
@@ -428,13 +424,6 @@
         <p data-i18n="talk.text">Escríbenos si tienes alguna duda.</p>
         <a id="talk-link" class="btn wa" href="https://wa.me/525539018069" target="_blank" rel="noopener" data-i18n="talk.button">Escribir por WhatsApp</a>
       </div>
-    </section>
-
-    <section class="card" aria-labelledby="gifts-h">
-      <div class="icon" aria-hidden="true">🎁</div>
-      <h2 id="gifts-h" data-i18n="gifts.title">Ideas de Regalo Paw Patrol</h2>
-      <p data-i18n="gifts.text">¿Buscas un regalo para Oliver? Aquí encontrarás ideas de Paw Patrol.</p>
-      <a class="btn" href="https://www.amazon.com.mx/stores/PAWPatrol/page/A81B94D1-1038-4CB5-80AE-4583232F815B" target="_blank" rel="noopener" data-i18n="gifts.button">Ver ideas de regalo</a>
     </section>
 
     <section class="card" aria-labelledby="album-h">
@@ -457,7 +446,7 @@
 
   <footer data-i18n="footer">¡Ningún trabajo es demasiado grande, ningún cachorro es demasiado pequeño! 🎉</footer>
 
-  <script src="i18n.js?v=8"></script>
+  <script src="i18n.js?v=9"></script>
   <script>
     (function () {
       const WHATSAPP_NUMBER = '525539018069';
@@ -476,9 +465,7 @@
           t('rsvp.messageName', { value: name.value.trim() }),
         ];
         const companions = byId('rsvp-with').value.trim();
-        const allergies = byId('rsvp-allergies').value.trim();
         if (companions) lines.push(t('rsvp.messageWith', { value: companions }));
-        if (allergies) lines.push(t('rsvp.messageAllergies', { value: allergies }));
         return lines.join('\n');
       }
 
