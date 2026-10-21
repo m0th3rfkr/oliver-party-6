@@ -4,6 +4,7 @@
 //   data-i18n-html="key"   -> innerHTML (only for the fixed strings below, never guest input)
 //   data-i18n-aria="key"   -> aria-label
 //   data-i18n-alt="key"    -> alt
+//   data-i18n-placeholder="key" -> placeholder
 (function () {
   const DEFAULT_LANG = 'es';
   const STORAGE_KEY = 'party-lang';
@@ -38,9 +39,23 @@
       'fun.hunt': 'Resbaladilla inflable',
       'fun.cake': 'Pastel y golosinas de cachorro',
       'rsvp.title': '¿Te unes a la manada?',
-      'rsvp.text': 'Por favor confirma tu asistencia a más tardar el miércoles 4 de noviembre y avísanos si hay alguna alergia.',
-      'rsvp.button': 'Confirma por WhatsApp',
-      'rsvp.message': '¡Hola! Quiero confirmar que vamos a la fiesta de Oliver 🎉',
+      'rsvp.text': 'Por favor confirma tu asistencia a más tardar el miércoles 4 de noviembre.',
+      'rsvp.nameLabel': 'Nombre del amig@ de Oliver',
+      'rsvp.namePlaceholder': 'Ej. Sofía',
+      'rsvp.withLabel': '¿Con quién viene?',
+      'rsvp.withPlaceholder': 'Ej. mamá, papá y su hermanito',
+      'rsvp.allergiesLabel': '¿Alguna alergia? (opcional)',
+      'rsvp.allergiesPlaceholder': 'Ej. nueces',
+      'rsvp.nameMissing': 'Escribe el nombre del amig@ de Oliver.',
+      'rsvp.button': 'Confirmar por WhatsApp',
+      'rsvp.message': '¡Hola! Confirmo que vamos a la fiesta de Oliver 🎉',
+      'rsvp.messageName': '🐶 Amig@ de Oliver: {value}',
+      'rsvp.messageWith': '👨‍👩‍👧 Viene con: {value}',
+      'rsvp.messageAllergies': '⚠️ Alergias: {value}',
+      'talk.title': '¿Quieres hablar con los papás de Oliver?',
+      'talk.text': 'Escríbenos si tienes alguna duda.',
+      'talk.button': 'Escribir por WhatsApp',
+      'talk.message': '¡Hola! Tengo una pregunta sobre la fiesta de Oliver.',
       'gifts.title': 'Ideas de Regalo Paw Patrol',
       'gifts.text': '¿Buscas un regalo para Oliver? Aquí encontrarás ideas de Paw Patrol.',
       'gifts.button': 'Ver ideas de regalo',
@@ -117,9 +132,23 @@
       'fun.hunt': 'Inflatable slide',
       'fun.cake': 'Cake and pup treats',
       'rsvp.title': 'Will You Join the Pack?',
-      'rsvp.text': 'Please RSVP by Wednesday, November 4 and let us know about any allergies.',
+      'rsvp.text': 'Please RSVP by Wednesday, November 4.',
+      'rsvp.nameLabel': "Name of Oliver's friend",
+      'rsvp.namePlaceholder': 'e.g. Sofia',
+      'rsvp.withLabel': "Who's coming with them?",
+      'rsvp.withPlaceholder': 'e.g. mom, dad and little brother',
+      'rsvp.allergiesLabel': 'Any allergies? (optional)',
+      'rsvp.allergiesPlaceholder': 'e.g. nuts',
+      'rsvp.nameMissing': "Please write the name of Oliver's friend.",
       'rsvp.button': 'RSVP on WhatsApp',
-      'rsvp.message': "Hi! I'd like to confirm we're coming to Oliver's party 🎉",
+      'rsvp.message': "Hi! We're coming to Oliver's party 🎉",
+      'rsvp.messageName': "🐶 Oliver's friend: {value}",
+      'rsvp.messageWith': '👨‍👩‍👧 Coming with: {value}',
+      'rsvp.messageAllergies': '⚠️ Allergies: {value}',
+      'talk.title': "Want to talk to Oliver's parents?",
+      'talk.text': 'Message us if you have any questions.',
+      'talk.button': 'Message on WhatsApp',
+      'talk.message': "Hi! I have a question about Oliver's party.",
       'gifts.title': 'Paw Patrol Gift Ideas',
       'gifts.text': 'Looking for a gift for Oliver? Here are some Paw Patrol ideas.',
       'gifts.button': 'See gift ideas',
@@ -197,6 +226,7 @@
     root.querySelectorAll('[data-i18n-html]').forEach((el) => { el.innerHTML = t(el.dataset.i18nHtml); });
     root.querySelectorAll('[data-i18n-aria]').forEach((el) => el.setAttribute('aria-label', t(el.dataset.i18nAria)));
     root.querySelectorAll('[data-i18n-alt]').forEach((el) => { el.alt = t(el.dataset.i18nAlt); });
+    root.querySelectorAll('[data-i18n-placeholder]').forEach((el) => { el.placeholder = t(el.dataset.i18nPlaceholder); });
     root.querySelectorAll('[data-lang]').forEach((btn) => btn.setAttribute('aria-pressed', String(btn.dataset.lang === lang)));
   }
 

@@ -245,6 +245,29 @@
     .btn.alt { background: var(--blue); border-bottom-color: var(--deep); }
     .btn.alt:hover, .btn.alt:focus-visible { background: #3378ea; }
 
+    .btn.wa { background: #128c4a; border-bottom-color: #0b5e31; border-top: 0; border-left: 0; border-right: 0; cursor: pointer; }
+    .btn.wa:hover, .btn.wa:focus-visible { background: #16a457; }
+
+    .rsvp { display: grid; gap: 14px; text-align: left; margin-bottom: 8px; }
+    .field { display: grid; gap: 6px; font-weight: 700; font-size: 1.1rem; color: var(--blue); }
+    .field input {
+      font: inherit;
+      font-weight: 600;
+      color: var(--ink);
+      background: #eef7ff;
+      border: 3px solid var(--sky);
+      border-radius: 16px;
+      padding: 10px 14px;
+      width: 100%;
+      min-width: 0;
+    }
+    .field input:focus { outline: none; border-color: var(--blue); background: var(--white); }
+    .field input[aria-invalid="true"] { border-color: var(--red); }
+    .field-error { color: var(--red-dark); font-size: 1.05rem !important; margin: 0 !important; }
+    .rsvp .btn { justify-self: center; margin-top: 6px; }
+    .talk { border-top: 3px dashed var(--sky); margin-top: 24px; padding-top: 20px; }
+    .talk h3 { font-family: var(--display); font-weight: normal; letter-spacing: 1px; color: var(--blue); font-size: 1.4rem; margin: 0 0 8px; }
+
     .pups { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 8px 0; }
     .pups img { display: block; width: clamp(64px, 14vw, 96px); height: auto; }
     .pups-group { display: block; width: 100%; max-width: 509px; height: auto; margin: 16px auto 0; }
@@ -382,8 +405,29 @@
     <section class="card" aria-labelledby="rsvp-h">
       <div class="icon" aria-hidden="true">✋</div>
       <h2 id="rsvp-h" data-i18n="rsvp.title">¿Te unes a la manada?</h2>
-      <p data-i18n="rsvp.text">Por favor confirma tu asistencia a más tardar el miércoles 4 de noviembre y avísanos si hay alguna alergia.</p>
-      <a id="rsvp-link" class="btn" href="https://wa.me/525539018069?text=%C2%A1Hola!%20Quiero%20confirmar%20que%20vamos%20a%20la%20fiesta%20de%20Oliver%20%F0%9F%8E%89" target="_blank" rel="noopener" data-i18n="rsvp.button">Confirma por WhatsApp</a>
+      <p data-i18n="rsvp.text">Por favor confirma tu asistencia a más tardar el miércoles 4 de noviembre.</p>
+      <form id="rsvp-form" class="rsvp" novalidate>
+        <label class="field">
+          <span data-i18n="rsvp.nameLabel">Nombre del amig@ de Oliver</span>
+          <input id="rsvp-name" name="name" type="text" autocomplete="off" required maxlength="80" placeholder="Ej. Sofía" data-i18n-placeholder="rsvp.namePlaceholder">
+        </label>
+        <label class="field">
+          <span data-i18n="rsvp.withLabel">¿Con quién viene?</span>
+          <input id="rsvp-with" name="with" type="text" autocomplete="off" maxlength="120" placeholder="Ej. mamá, papá y su hermanito" data-i18n-placeholder="rsvp.withPlaceholder">
+        </label>
+        <label class="field">
+          <span data-i18n="rsvp.allergiesLabel">¿Alguna alergia? (opcional)</span>
+          <input id="rsvp-allergies" name="allergies" type="text" autocomplete="off" maxlength="120" placeholder="Ej. nueces" data-i18n-placeholder="rsvp.allergiesPlaceholder">
+        </label>
+        <p id="rsvp-error" class="field-error" role="alert" hidden data-i18n="rsvp.nameMissing">Escribe el nombre del amig@ de Oliver.</p>
+        <button class="btn wa" type="submit" data-i18n="rsvp.button">Confirmar por WhatsApp</button>
+      </form>
+
+      <div class="talk">
+        <h3 data-i18n="talk.title">¿Quieres hablar con los papás de Oliver?</h3>
+        <p data-i18n="talk.text">Escríbenos si tienes alguna duda.</p>
+        <a id="talk-link" class="btn wa" href="https://wa.me/525539018069" target="_blank" rel="noopener" data-i18n="talk.button">Escribir por WhatsApp</a>
+      </div>
     </section>
 
     <section class="card" aria-labelledby="gifts-h">
@@ -413,16 +457,58 @@
 
   <footer data-i18n="footer">¡Ningún trabajo es demasiado grande, ningún cachorro es demasiado pequeño! 🎉</footer>
 
-  <script src="i18n.js?v=4"></script>
+  <script src="i18n.js?v=5"></script>
   <script>
     (function () {
       const WHATSAPP_NUMBER = '525539018069';
-      const link = document.getElementById('rsvp-link');
-      function updateRsvpLink() {
-        link.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(window.I18N.t('rsvp.message'))}`;
+      const { t, onChange } = window.I18N;
+      const byId = (id) => document.getElementById(id);
+      const form = byId('rsvp-form');
+      const name = byId('rsvp-name');
+      const error = byId('rsvp-error');
+      const talk = byId('talk-link');
+
+      const whatsappUrl = (text) => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+
+      function rsvpMessage() {
+        const lines = [
+          t('rsvp.message'),
+          t('rsvp.messageName', { value: name.value.trim() }),
+        ];
+        const companions = byId('rsvp-with').value.trim();
+        const allergies = byId('rsvp-allergies').value.trim();
+        if (companions) lines.push(t('rsvp.messageWith', { value: companions }));
+        if (allergies) lines.push(t('rsvp.messageAllergies', { value: allergies }));
+        return lines.join('\n');
       }
-      updateRsvpLink();
-      window.I18N.onChange(updateRsvpLink);
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!name.value.trim()) {
+          error.hidden = false;
+          name.setAttribute('aria-invalid', 'true');
+          name.focus();
+          return;
+        }
+        error.hidden = true;
+        name.removeAttribute('aria-invalid');
+        const url = whatsappUrl(rsvpMessage());
+        // A blocked pop-up returns null; open WhatsApp in this tab instead
+        if (!window.open(url, '_blank', 'noopener')) window.location.href = url;
+      });
+
+      name.addEventListener('input', () => {
+        if (name.value.trim()) {
+          error.hidden = true;
+          name.removeAttribute('aria-invalid');
+        }
+      });
+
+      function updateTalkLink() {
+        talk.href = whatsappUrl(t('talk.message'));
+      }
+      updateTalkLink();
+      onChange(updateTalkLink);
     })();
 
     (function () {
