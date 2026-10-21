@@ -53,7 +53,7 @@ create policy "party photos: guests see only their own"
   They cannot delete. 50 MB is roughly 20-30 seconds of phone video, so short clips work best.
 - Videos are uploaded as they are. A thumbnail frame is made on the guest's phone when the browser can read
   the video; otherwise the album shows the video's first frame instead.
-- Until `SUPABASE_URL` and `SUPABASE_ANON_KEY` are filled in, the album shows a preview with sample photos.
+- Until `SUPABASE_URL` and `SUPABASE_ANON_KEY` are filled in, the album starts empty and works as a preview.
   Anything added in preview mode stays in that browser only.
 - Photos are shrunk on the guest's phone before uploading (longest side 2400px), and they're turned
   the right way up. A small thumbnail is uploaded too, so the album grid loads fast.

@@ -1,7 +1,7 @@
 // Where album items come from. Both sources return items shaped like:
 //   { name, kind: 'photo' | 'video', full, save, thumb }   (thumb may be null)
 // createSupabaseSource is the real album; createDemoSource is the preview shown
-// before Supabase is connected (sample photos + anything added in this browser).
+// before Supabase is connected (only what was added in this browser).
 // In the real album each guest only sees what they uploaded.
 
 const BUCKET = 'party-photos';
@@ -210,33 +210,11 @@ export function createSupabaseSource(client) {
 
 // ---------- Preview (no Supabase yet) ----------
 
-// Sample photos from picsum.photos (free placeholder images) and two short CC0 clips from MDN.
-const SAMPLE_PHOTOS = [
-  [1015, 1200, 800], [1025, 800, 1100], [1062, 900, 900], [237, 800, 1000], [1074, 1200, 800],
-  [169, 1000, 800], [1084, 800, 1000], [433, 1200, 800], [582, 900, 900], [593, 1000, 800],
-  [659, 800, 1100], [718, 1200, 800], [783, 900, 900],
-];
-const SAMPLE_VIDEOS = [
-  'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
-  'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/friday.mp4',
-];
-
-function sampleItems() {
-  const photos = SAMPLE_PHOTOS.map(([id, w, h]) => {
-    const full = `https://picsum.photos/id/${id}/${w}/${h}`;
-    return { name: `sample-${id}`, kind: 'photo', full, save: full, thumb: `https://picsum.photos/id/${id}/${Math.round(w / 2)}/${Math.round(h / 2)}` };
-  });
-  const videos = SAMPLE_VIDEOS.map((full, i) => ({ name: `sample-video-${i}`, kind: 'video', full, save: full, thumb: null }));
-  // Sprinkle the videos between photos, like a real album would have
-  return [...photos.slice(0, 3), videos[0], ...photos.slice(3, 9), videos[1], ...photos.slice(9)];
-}
-
 export function createDemoSource() {
-  const samples = sampleItems();
   let local = [];
 
   async function list() {
-    return [...local, ...samples];
+    return local;
   }
 
   // Keeps the file in this browser only, so people can see how their own photos look.

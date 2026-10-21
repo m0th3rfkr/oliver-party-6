@@ -1,10 +1,11 @@
 // Fill these two in after creating your Supabase project (see SETUP.md).
 // The anon key is meant to be public; the bucket policies limit what it can do.
-// Until they are filled in, the album shows a preview with sample photos.
+// Until they are filled in, the album is a preview that only keeps
+// what is added in this browser.
 const SUPABASE_URL = 'YOUR_SUPABASE_URL';
 const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
 
-import { createSupabaseSource, createDemoSource } from './album-sources.js?v=4';
+import { createSupabaseSource, createDemoSource } from './album-sources.js?v=5';
 import { renderMagazine } from './album-magazine.js?v=3';
 import { createViewer } from './album-viewer.js';
 
