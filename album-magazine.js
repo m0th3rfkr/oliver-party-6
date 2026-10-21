@@ -1,4 +1,4 @@
-// Lays the album out as a magazine: a cover (newest photo) and inside pages,
+// Lays the album out as a magazine: a cover (the party invitation) and inside pages,
 // two pages per spread, each with a headline, a photo layout and pup stickers.
 
 const PER_PAGE = 5;
@@ -28,9 +28,7 @@ export const STICKERS = [
   'img/pup-zuma.png',
   'img/pup-rex.png',
 ];
-const COVER_STICKER = 'img/marshall.png';
-const COVER_LOGO = 'img/paw-patrol-logo.png';
-const EMPTY_COVER = 'img/pups-group.png';
+const COVER_IMAGE = 'img/cover-invitation.jpg';
 
 function el(tag, className, attrs = {}) {
   const node = document.createElement(tag);
@@ -82,29 +80,9 @@ function shotButton(item, index, shape, t, onOpen) {
   return button;
 }
 
-function renderCover(items, t, tn, onOpen) {
+function renderCover(t) {
   const cover = el('article', 'cover');
-  const featured = items.find((item) => item.kind === 'photo') || items[0];
-
-  if (featured) {
-    cover.append(mediaEl(featured, t, { preferFull: true }));
-    const open = el('button', 'cover-open', { type: 'button', 'aria-label': `${t('album.open')}: ${t('album.photoAlt')}` });
-    open.addEventListener('click', () => onOpen(items.indexOf(featured)));
-    cover.append(open);
-  } else {
-    cover.classList.add('is-empty', 'loaded');
-    cover.append(decorImg(EMPTY_COVER, 'cover-empty-art'));
-  }
-
-  const top = el('div', 'cover-top');
-  top.append(decorImg(COVER_LOGO, 'cover-logo'), textEl('p', 'cover-kicker', t('album.coverKicker')));
-  const bottom = el('div', 'cover-bottom');
-  bottom.append(
-    textEl('h2', 'cover-title', t('album.coverTitle')),
-    textEl('p', 'cover-date', t('album.coverDate')),
-    textEl('p', 'cover-count', items.length ? tn('album.items', items.length) : t('album.coverEmpty')),
-  );
-  cover.append(top, bottom, decorImg(COVER_STICKER, 'cover-sticker'));
+  cover.append(el('img', 'cover-art', { src: COVER_IMAGE, alt: t('album.coverAlt'), width: 937, height: 1679 }));
   return cover;
 }
 
@@ -127,7 +105,7 @@ function renderPage(pageItems, startIndex, pageNumber, t, onOpen) {
   return page;
 }
 
-export function renderMagazine(container, items, { t, tn, onOpen }) {
+export function renderMagazine(container, items, { t, onOpen }) {
   const pages = [];
   for (let start = 0; start < items.length; start += PER_PAGE) {
     pages.push(renderPage(items.slice(start, start + PER_PAGE), start, pages.length + 2, t, onOpen));
@@ -140,5 +118,5 @@ export function renderMagazine(container, items, { t, tn, onOpen }) {
     spreads.push(spread);
   }
 
-  container.replaceChildren(renderCover(items, t, tn, onOpen), ...spreads);
+  container.replaceChildren(renderCover(t), ...spreads);
 }

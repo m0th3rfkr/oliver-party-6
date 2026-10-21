@@ -6,7 +6,7 @@ const SUPABASE_URL = 'YOUR_SUPABASE_URL';
 const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
 
 import { createSupabaseSource, createDemoSource } from './album-sources.js?v=5';
-import { renderMagazine } from './album-magazine.js?v=3';
+import { renderMagazine } from './album-magazine.js?v=4';
 import { createViewer } from './album-viewer.js';
 
 const { t, tn, onChange } = window.I18N;
@@ -59,7 +59,7 @@ function isConfigured() {
 }
 
 function render() {
-  renderMagazine(els.magazine, state.items, { t, tn, onOpen: viewer.open });
+  renderMagazine(els.magazine, state.items, { t, onOpen: viewer.open });
   els.slideshow.disabled = state.items.length === 0;
 }
 
