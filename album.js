@@ -1,10 +1,4 @@
-// Fill these two in after creating your Supabase project (see SETUP.md).
-// The anon key is meant to be public; the bucket policies limit what it can do.
-// Until they are filled in, the album is a preview that only keeps
-// what is added in this browser.
-const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
-
+import { SUPABASE_URL, SUPABASE_ANON_KEY, isSupabaseConfigured } from './supabase-config.js?v=1';
 import { createSupabaseSource, createDemoSource } from './album-sources.js?v=5';
 import { renderMagazine } from './album-magazine.js?v=4';
 import { createViewer } from './album-viewer.js';
@@ -52,10 +46,6 @@ function setProgress(fraction) {
 function showQr() {
   if (typeof QRCode === 'undefined') return;
   new QRCode(byId('qrcode'), { text: window.location.href.split('#')[0], width: 160, height: 160 });
-}
-
-function isConfigured() {
-  return !SUPABASE_URL.startsWith('YOUR_') && !SUPABASE_ANON_KEY.startsWith('YOUR_');
 }
 
 function render() {
@@ -137,7 +127,7 @@ function init() {
     if (state.status) els.status.textContent = state.status.render();
   });
 
-  const source = isConfigured()
+  const source = isSupabaseConfigured()
     ? createSupabaseSource(window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY))
     : createDemoSource();
   els.setup.hidden = !source.isDemo;

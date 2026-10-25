@@ -1,4 +1,4 @@
-# Party album setup (Supabase, free tier)
+# Party album and RSVP setup (Supabase, free tier)
 
 The album is private: each guest only sees the photos and videos they uploaded.
 You see everything in the Supabase dashboard.
@@ -35,16 +35,38 @@ create policy "party photos: guests see only their own"
          and (storage.foldername(name))[1] = (select auth.uid()::text));
 ```
 
-5. Open **Project Settings → API** and copy:
+5. Still in **SQL Editor**, run this too. It creates the RSVP list: guests can add to it but can't read it.
+
+```sql
+create table if not exists public.rsvps (
+  id bigint generated always as identity primary key,
+  created_at timestamptz not null default now(),
+  name text not null check (char_length(name) between 1 and 80),
+  companions text check (char_length(companions) <= 120),
+  lang text check (char_length(lang) <= 5)
+);
+
+alter table public.rsvps enable row level security;
+
+drop policy if exists "rsvps: guests can add" on public.rsvps;
+create policy "rsvps: guests can add"
+  on public.rsvps for insert to anon, authenticated
+  with check (true);
+```
+
+6. Open **Project Settings → API** and copy:
    - **Project URL**
    - **anon public** key
-6. Paste both into the top of `album.js` (`SUPABASE_URL`, `SUPABASE_ANON_KEY`), then commit and push.
+7. Paste both into `supabase-config.js` (`SUPABASE_URL`, `SUPABASE_ANON_KEY`), then commit and push.
    GitHub Pages updates the site in a minute or two.
    The QR code on `album.html` encodes the page's own address, so open the
    published album page and print or show the QR from there.
 
 ## Notes
 
+- **RSVPs:** see who confirmed in **Table Editor → rsvps**. Each RSVP is saved the moment the guest taps
+  **Confirm**, even if they never send the WhatsApp message. RSVPs made before Supabase was set up
+  were not saved anywhere; those only exist as WhatsApp chats.
 - A guest's photos are tied to the browser they used. On another phone or browser (or after clearing
   the browser's data) they start with an empty album, but their uploads are still safe in Supabase.
 - Each guest's files are in a folder named after their anonymous account in **Storage → party-photos**.
@@ -53,13 +75,13 @@ create policy "party photos: guests see only their own"
   They cannot delete. 50 MB is roughly 20-30 seconds of phone video, so short clips work best.
 - Videos are uploaded as they are. A thumbnail frame is made on the guest's phone when the browser can read
   the video; otherwise the album shows the video's first frame instead.
-- Until `SUPABASE_URL` and `SUPABASE_ANON_KEY` are filled in, the album starts empty and works as a preview.
+- Until `SUPABASE_URL` and `SUPABASE_ANON_KEY` are filled in, RSVPs only go out by WhatsApp and the album starts empty and works as a preview.
   Anything added in preview mode stays in that browser only.
 - Photos are shrunk on the guest's phone before uploading (longest side 2400px), and they're turned
   the right way up. A small thumbnail is uploaded too, so the album grid loads fast.
 - iPhone HEIC photos are converted to JPEG on iPhones. On other devices that can't read HEIC,
   the original file is uploaded as it is.
-- The anon key is public by design. Do not put the `service_role` key in `album.js`.
+- The anon key is public by design. Do not put the `service_role` key in `supabase-config.js`.
 - Photo links are temporary (they last a day), so a copied link stops working after that.
 - **Play slideshow** shows the guest's own photos full screen, moving every 5 seconds.
 - `img/oliver/` is kept out of git (see `.gitignore`) so those photos are never published.

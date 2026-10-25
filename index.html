@@ -449,7 +449,9 @@
   <footer data-i18n="footer">¡Ningún trabajo es demasiado grande, ningún cachorro es demasiado pequeño! 🎉</footer>
 
   <script src="i18n.js?v=9"></script>
-  <script>
+  <script type="module">
+    import { saveRsvp } from './rsvp-store.js?v=1';
+
     (function () {
       const WHATSAPP_NUMBER = '525539018069';
       const { t, onChange } = window.I18N;
@@ -481,6 +483,12 @@
         }
         error.hidden = true;
         name.removeAttribute('aria-invalid');
+        // Not awaited: the WhatsApp tab must open right away or the pop-up gets blocked
+        saveRsvp({
+          name: name.value.trim(),
+          companions: byId('rsvp-with').value.trim(),
+          lang: document.documentElement.lang,
+        });
         const url = whatsappUrl(rsvpMessage());
         // A blocked pop-up returns null; open WhatsApp in this tab instead
         if (!window.open(url, '_blank', 'noopener')) window.location.href = url;
