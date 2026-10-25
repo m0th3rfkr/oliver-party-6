@@ -13,7 +13,7 @@ const els = {
   who: byId('who'),
   logout: byId('logout'),
   countPeople: byId('count-people'),
-  countKids: byId('count-kids'),
+  countSiblings: byId('count-siblings'),
   countAdults: byId('count-adults'),
   countFriends: byId('count-friends'),
   countRows: byId('count-rows'),
@@ -44,26 +44,27 @@ const plural = (n, one, other) => `${n} ${n === 1 ? one : other}`;
 
 function describeCount(row) {
   const people = 1 + row.adults + row.kids;
-  return `${plural(people, 'persona', 'personas')}: ${plural(row.adults, 'adulto', 'adultos')} y ${plural(1 + row.kids, 'niño', 'niños')}`;
+  return `1 amig@ + ${plural(row.adults, 'adulto', 'adultos')} + ${plural(row.kids, 'hermanito', 'hermanitos')} = ${plural(people, 'persona', 'personas')}`;
 }
 
 // Counts each friend once, using their newest RSVP (rows arrive newest first).
 function summarize(latestRows) {
   const counted = latestRows.filter(hasCounts);
   const adults = counted.reduce((sum, row) => sum + row.adults, 0);
-  const kids = counted.reduce((sum, row) => sum + 1 + row.kids, 0);
-  return { adults, kids, people: adults + kids, missing: latestRows.length - counted.length };
+  const siblings = counted.reduce((sum, row) => sum + row.kids, 0);
+  const friends = latestRows.length;
+  return { friends, adults, siblings, people: friends + adults + siblings, missing: latestRows.length - counted.length };
 }
 
 function renderTotals(latestRows) {
   const totals = summarize(latestRows);
   els.countPeople.textContent = totals.people;
-  els.countKids.textContent = totals.kids;
+  els.countFriends.textContent = totals.friends;
   els.countAdults.textContent = totals.adults;
-  els.countFriends.textContent = latestRows.length;
+  els.countSiblings.textContent = totals.siblings;
   els.countRows.textContent = rows.length;
   els.missing.hidden = totals.missing === 0;
-  els.missing.textContent = `${plural(totals.missing, 'confirmación', 'confirmaciones')} sin número de personas (de antes del cambio). No están sumadas arriba.`;
+  els.missing.textContent = `${plural(totals.missing, 'confirmación', 'confirmaciones')} sin número de acompañantes (de antes del cambio): el amig@ sí se cuenta, sus acompañantes no.`;
 }
 
 function renderRow(row, isRepeat) {

@@ -72,7 +72,7 @@
     .msg { margin: 0; font-weight: 700; min-height: 1.5em; }
     .msg.error { color: var(--red-dark); }
     .totals { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; text-align: center; }
-    .total { flex: 1 1 140px; background: #eef7ff; border-radius: 18px; padding: 12px; }
+    .total { flex: 1 1 120px; background: #eef7ff; border-radius: 18px; padding: 12px; }
     .total.big { flex-basis: 100%; background: var(--blue); color: var(--white); }
     .total.big b { color: var(--white); font-size: 3.2rem; }
     .breakdown { text-align: center; margin: 12px 0 0; }
@@ -113,10 +113,11 @@
       <div class="card">
         <div class="totals">
           <div class="total big"><b id="count-people">0</b>personas en total</div>
-          <div class="total"><b id="count-kids">0</b>niños</div>
+          <div class="total"><b id="count-friends">0</b>amig@s de Oliver</div>
           <div class="total"><b id="count-adults">0</b>adultos</div>
+          <div class="total"><b id="count-siblings">0</b>hermanitos</div>
         </div>
-        <p class="breakdown"><span id="count-friends">0</span> amig@s de Oliver confirmados · <span id="count-rows">0</span> confirmaciones recibidas</p>
+        <p class="breakdown"><span id="count-rows">0</span> confirmaciones recibidas</p>
         <p id="missing" class="breakdown warn" hidden></p>
         <div class="toolbar">
           <input id="search" type="search" placeholder="Buscar nombre…" aria-label="Buscar nombre">
@@ -131,6 +132,6 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-  <script type="module" src="lista.js?v=2"></script>
+  <script type="module" src="lista.js?v=3"></script>
 </body>
 </html>
