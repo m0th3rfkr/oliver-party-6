@@ -73,6 +73,11 @@
     .msg.error { color: var(--red-dark); }
     .totals { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; text-align: center; }
     .total { flex: 1 1 140px; background: #eef7ff; border-radius: 18px; padding: 12px; }
+    .total.big { flex-basis: 100%; background: var(--blue); color: var(--white); }
+    .total.big b { color: var(--white); font-size: 3.2rem; }
+    .breakdown { text-align: center; margin: 12px 0 0; }
+    .breakdown.warn { color: var(--red-dark); font-weight: 700; }
+    .count { font-weight: 700; color: var(--blue); }
     .total b { display: block; font-family: var(--display); font-weight: normal; font-size: 2.4rem; color: var(--blue); line-height: 1; }
     .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 16px 0 0; }
     .toolbar input { flex: 1 1 200px; width: auto; }
@@ -107,9 +112,12 @@
       <p class="who">Entraste como <span id="who"></span> · <button id="logout" type="button">Salir</button></p>
       <div class="card">
         <div class="totals">
-          <div class="total"><b id="count-kids">0</b>amig@s confirmados</div>
-          <div class="total"><b id="count-rows">0</b>confirmaciones recibidas</div>
+          <div class="total big"><b id="count-people">0</b>personas en total</div>
+          <div class="total"><b id="count-kids">0</b>niños</div>
+          <div class="total"><b id="count-adults">0</b>adultos</div>
         </div>
+        <p class="breakdown"><span id="count-friends">0</span> amig@s de Oliver confirmados · <span id="count-rows">0</span> confirmaciones recibidas</p>
+        <p id="missing" class="breakdown warn" hidden></p>
         <div class="toolbar">
           <input id="search" type="search" placeholder="Buscar nombre…" aria-label="Buscar nombre">
           <button id="refresh" class="btn quiet" type="button">Actualizar</button>
@@ -123,6 +131,6 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-  <script type="module" src="lista.js?v=1"></script>
+  <script type="module" src="lista.js?v=2"></script>
 </body>
 </html>

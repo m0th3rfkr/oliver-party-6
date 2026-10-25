@@ -267,6 +267,22 @@
     .field input[aria-invalid="true"] { border-color: var(--red); }
     .field-error { color: var(--red-dark); font-size: 1.05rem !important; margin: 0 !important; }
     .rsvp .btn { justify-self: center; margin-top: 6px; }
+    .counts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
+    .stepper { display: flex; align-items: center; gap: 8px; }
+    .stepper button {
+      flex: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 0;
+      background: var(--blue);
+      color: var(--white);
+      font: 700 1.6rem/1 var(--body);
+      cursor: pointer;
+    }
+    .stepper button:hover, .stepper button:focus-visible { background: #3378ea; }
+    .stepper button:disabled { background: #b9cbe8; cursor: default; }
+    .stepper .field-count { text-align: center; }
     .talk { border-top: 3px dashed var(--sky); margin-top: 24px; padding-top: 20px; }
     .talk h3 { font-family: var(--display); font-weight: normal; letter-spacing: 1px; color: var(--blue); font-size: 1.4rem; margin: 0 0 8px; }
 
@@ -417,6 +433,24 @@
           <span data-i18n="rsvp.withLabel">¿Con quién viene?</span>
           <input id="rsvp-with" name="with" type="text" autocomplete="off" maxlength="120" placeholder="Ej. mamá, papá y su hermanito" data-i18n-placeholder="rsvp.withPlaceholder">
         </label>
+        <div class="counts">
+          <div class="field">
+            <span id="adults-label" data-i18n="rsvp.adultsLabel">Adultos que vienen</span>
+            <div class="stepper">
+              <button type="button" data-step="-1" data-target="rsvp-adults" aria-label="−" data-i18n-aria="rsvp.less">−</button>
+              <input id="rsvp-adults" class="field-count" type="number" inputmode="numeric" min="0" max="10" value="1" aria-labelledby="adults-label">
+              <button type="button" data-step="1" data-target="rsvp-adults" aria-label="+" data-i18n-aria="rsvp.more">+</button>
+            </div>
+          </div>
+          <div class="field">
+            <span id="kids-label" data-i18n="rsvp.kidsLabel">Otros niños (hermanitos)</span>
+            <div class="stepper">
+              <button type="button" data-step="-1" data-target="rsvp-kids" aria-label="−" data-i18n-aria="rsvp.less">−</button>
+              <input id="rsvp-kids" class="field-count" type="number" inputmode="numeric" min="0" max="10" value="0" aria-labelledby="kids-label">
+              <button type="button" data-step="1" data-target="rsvp-kids" aria-label="+" data-i18n-aria="rsvp.more">+</button>
+            </div>
+          </div>
+        </div>
         <p id="rsvp-error" class="field-error" role="alert" hidden data-i18n="rsvp.nameMissing">Escribe el nombre del amig@ de Oliver.</p>
         <button class="btn wa" type="submit" data-i18n="rsvp.button">Confirmar</button>
       </form>
@@ -448,9 +482,9 @@
 
   <footer data-i18n="footer">¡Ningún trabajo es demasiado grande, ningún cachorro es demasiado pequeño! 🎉</footer>
 
-  <script src="i18n.js?v=9"></script>
+  <script src="i18n.js?v=10"></script>
   <script type="module">
-    import { saveRsvp } from './rsvp-store.js?v=1';
+    import { saveRsvp } from './rsvp-store.js?v=2';
 
     (function () {
       const WHATSAPP_NUMBER = '525539018069';
@@ -460,6 +494,37 @@
       const name = byId('rsvp-name');
       const error = byId('rsvp-error');
       const talk = byId('talk-link');
+      const adults = byId('rsvp-adults');
+      const kids = byId('rsvp-kids');
+
+      // Keeps a count field a whole number within its min/max.
+      function readCount(input) {
+        const n = Math.round(Number(input.value));
+        const min = Number(input.min);
+        const max = Number(input.max);
+        return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : min;
+      }
+
+      function syncStepper(input) {
+        const n = readCount(input);
+        input.value = n;
+        document.querySelectorAll(`[data-target="${input.id}"]`).forEach((btn) => {
+          const step = Number(btn.dataset.step);
+          btn.disabled = step < 0 ? n <= Number(input.min) : n >= Number(input.max);
+        });
+      }
+
+      document.querySelectorAll('[data-step]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const input = byId(btn.dataset.target);
+          input.value = readCount(input) + Number(btn.dataset.step);
+          syncStepper(input);
+        });
+      });
+      [adults, kids].forEach((input) => {
+        input.addEventListener('change', () => syncStepper(input));
+        syncStepper(input);
+      });
 
       const whatsappUrl = (text) => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 
@@ -470,6 +535,11 @@
         ];
         const companions = byId('rsvp-with').value.trim();
         if (companions) lines.push(t('rsvp.messageWith', { value: companions }));
+        lines.push(t('rsvp.messageCount', {
+          adults: readCount(adults),
+          kids: readCount(kids) + 1,
+          total: readCount(adults) + readCount(kids) + 1,
+        }));
         return lines.join('\n');
       }
 
@@ -487,6 +557,8 @@
         saveRsvp({
           name: name.value.trim(),
           companions: byId('rsvp-with').value.trim(),
+          adults: readCount(adults),
+          kids: readCount(kids),
           lang: document.documentElement.lang,
         });
         const url = whatsappUrl(rsvpMessage());

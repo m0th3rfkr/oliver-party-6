@@ -12,8 +12,12 @@ const els = {
   listView: byId('list-view'),
   who: byId('who'),
   logout: byId('logout'),
+  countPeople: byId('count-people'),
   countKids: byId('count-kids'),
+  countAdults: byId('count-adults'),
+  countFriends: byId('count-friends'),
   countRows: byId('count-rows'),
+  missing: byId('missing'),
   search: byId('search'),
   refresh: byId('refresh'),
   listMsg: byId('list-msg'),
@@ -33,6 +37,35 @@ function setMsg(el, text, isError = false) {
   el.classList.toggle('error', isError);
 }
 
+// RSVPs sent before the form asked for counts have adults/kids = null.
+const hasCounts = (row) => row.adults !== null && row.kids !== null;
+
+const plural = (n, one, other) => `${n} ${n === 1 ? one : other}`;
+
+function describeCount(row) {
+  const people = 1 + row.adults + row.kids;
+  return `${plural(people, 'persona', 'personas')}: ${plural(row.adults, 'adulto', 'adultos')} y ${plural(1 + row.kids, 'niño', 'niños')}`;
+}
+
+// Counts each friend once, using their newest RSVP (rows arrive newest first).
+function summarize(latestRows) {
+  const counted = latestRows.filter(hasCounts);
+  const adults = counted.reduce((sum, row) => sum + row.adults, 0);
+  const kids = counted.reduce((sum, row) => sum + 1 + row.kids, 0);
+  return { adults, kids, people: adults + kids, missing: latestRows.length - counted.length };
+}
+
+function renderTotals(latestRows) {
+  const totals = summarize(latestRows);
+  els.countPeople.textContent = totals.people;
+  els.countKids.textContent = totals.kids;
+  els.countAdults.textContent = totals.adults;
+  els.countFriends.textContent = latestRows.length;
+  els.countRows.textContent = rows.length;
+  els.missing.hidden = totals.missing === 0;
+  els.missing.textContent = `${plural(totals.missing, 'confirmación', 'confirmaciones')} sin número de personas (de antes del cambio). No están sumadas arriba.`;
+}
+
 function renderRow(row, isRepeat) {
   const li = document.createElement('li');
   const name = document.createElement('span');
@@ -45,6 +78,12 @@ function renderRow(row, isRepeat) {
     withEl.textContent = `Viene con: ${row.companions}`;
     li.append(withEl);
   }
+  if (hasCounts(row)) {
+    const count = document.createElement('span');
+    count.className = 'count';
+    count.textContent = describeCount(row);
+    li.append(count);
+  }
   const when = document.createElement('span');
   when.className = 'when';
   when.textContent = formatWhen(row.created_at);
@@ -52,7 +91,7 @@ function renderRow(row, isRepeat) {
   if (isRepeat) {
     const dup = document.createElement('span');
     dup.className = 'dup';
-    dup.textContent = 'Ya había confirmado antes (posible repetido)';
+    dup.textContent = 'Ya había confirmado antes: solo se cuenta su confirmación más nueva';
     li.append(dup);
   }
   return li;
@@ -68,8 +107,12 @@ function render() {
     seen.add(key);
   });
 
-  els.countKids.textContent = seen.size;
-  els.countRows.textContent = rows.length;
+  const latestByName = new Map();
+  rows.forEach((row) => {
+    const key = normalize(row.name);
+    if (!latestByName.has(key)) latestByName.set(key, row);
+  });
+  renderTotals([...latestByName.values()]);
 
   const query = normalize(els.search.value);
   const visible = query ? rows.filter((row) => normalize(row.name).includes(query)) : rows;
@@ -85,7 +128,7 @@ async function loadRows() {
   setMsg(els.listMsg, 'Cargando…');
   const { data, error } = await supabase
     .from('rsvps')
-    .select('id, created_at, name, companions')
+    .select('id, created_at, name, companions, adults, kids')
     .order('created_at', { ascending: false });
   els.refresh.disabled = false;
   if (error) {

@@ -54,6 +54,14 @@ create policy "rsvps: guests can add"
   with check (true);
 ```
 
+   Then add the head-count columns (the form asks how many adults and other kids are coming):
+
+```sql
+alter table public.rsvps
+  add column if not exists adults smallint check (adults between 0 and 20),
+  add column if not exists kids smallint check (kids between 0 and 20);
+```
+
 6. To read the list on `lista.html`, run this with **your** email. Only that email can see the RSVPs.
 
 ```sql
@@ -78,7 +86,8 @@ create policy "rsvps: owner can read"
 ## Notes
 
 - **RSVPs:** open `lista.html` on the site, type your email, and tap the link Supabase emails you
-  (open it on the same phone or computer). It shows the count, a search box, and flags names that confirmed twice.
+  (open it on the same phone or computer). It shows how many people are coming (adults and kids), a search box, and flags names that confirmed twice
+  (only the newest one is counted).
   You can also see them in **Table Editor → rsvps**. Each RSVP is saved the moment the guest taps
   **Confirm**, even if they never send the WhatsApp message. RSVPs made before Supabase was set up
   were not saved anywhere; those only exist as WhatsApp chats.

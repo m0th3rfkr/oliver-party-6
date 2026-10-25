@@ -3,10 +3,10 @@ import { SUPABASE_URL, SUPABASE_ANON_KEY, isSupabaseConfigured } from './supabas
 /**
  * Saves an RSVP to the Supabase "rsvps" table (see SETUP.md).
  * keepalive lets the request finish even when the page then navigates to WhatsApp.
- * @param {{ name: string, companions: string, lang: string }} rsvp
+ * @param {{ name: string, companions: string, adults: number, kids: number, lang: string }} rsvp
  * @returns {Promise<boolean>} whether it was saved
  */
-export async function saveRsvp({ name, companions, lang }) {
+export async function saveRsvp({ name, companions, adults, kids, lang }) {
   if (!isSupabaseConfigured()) return false;
   try {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/rsvps`, {
@@ -18,7 +18,7 @@ export async function saveRsvp({ name, companions, lang }) {
         'Content-Type': 'application/json',
         Prefer: 'return=minimal',
       },
-      body: JSON.stringify({ name, companions: companions || null, lang }),
+      body: JSON.stringify({ name, companions: companions || null, adults, kids, lang }),
     });
     if (!res.ok) console.error('RSVP not saved', res.status, await res.text());
     return res.ok;
