@@ -54,17 +54,32 @@ create policy "rsvps: guests can add"
   with check (true);
 ```
 
-6. Open **Project Settings → API** and copy:
+6. To read the list on `lista.html`, run this with **your** email. Only that email can see the RSVPs.
+
+```sql
+drop policy if exists "rsvps: owner can read" on public.rsvps;
+create policy "rsvps: owner can read"
+  on public.rsvps for select to authenticated
+  using (lower(auth.jwt() ->> 'email') = 'you@example.com');
+```
+
+   Then open **Authentication → URL Configuration**: set **Site URL** to the published site
+   (for example `https://<user>.github.io/oliver-party-6/`) and add `https://<user>.github.io/oliver-party-6/**`
+   under **Redirect URLs**, so the sign-in email link comes back to the site.
+
+7. Open **Project Settings → API** and copy:
    - **Project URL**
    - **anon public** key
-7. Paste both into `supabase-config.js` (`SUPABASE_URL`, `SUPABASE_ANON_KEY`), then commit and push.
+8. Paste both into `supabase-config.js` (`SUPABASE_URL`, `SUPABASE_ANON_KEY`), then commit and push.
    GitHub Pages updates the site in a minute or two.
    The QR code on `album.html` encodes the page's own address, so open the
    published album page and print or show the QR from there.
 
 ## Notes
 
-- **RSVPs:** see who confirmed in **Table Editor → rsvps**. Each RSVP is saved the moment the guest taps
+- **RSVPs:** open `lista.html` on the site, type your email, and tap the link Supabase emails you
+  (open it on the same phone or computer). It shows the count, a search box, and flags names that confirmed twice.
+  You can also see them in **Table Editor → rsvps**. Each RSVP is saved the moment the guest taps
   **Confirm**, even if they never send the WhatsApp message. RSVPs made before Supabase was set up
   were not saved anywhere; those only exist as WhatsApp chats.
 - A guest's photos are tied to the browser they used. On another phone or browser (or after clearing
