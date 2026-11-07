@@ -4,20 +4,10 @@
 const PER_PAGE = 5;
 const HEADLINE_COUNT = 6;
 
-// Each page uses one of these shapes per item, on a 2-column grid.
-// big = 2x2, wide = 2x1, tall = 1x2, small = 1x1. Each layout fills a 2x4 rectangle exactly,
-// so the two pages of a spread come out the same height.
-const LAYOUTS = [
-  ['big', 'small', 'small', 'small', 'small'],
-  ['wide', 'tall', 'small', 'small', 'wide'],
-  ['small', 'small', 'big', 'small', 'small'],
-];
-const SHORT_LAYOUTS = {
-  1: ['big'],
-  2: ['wide', 'wide'],
-  3: ['big', 'small', 'small'],
-  4: ['wide', 'small', 'small', 'wide'],
-};
+// Each frame takes its photo's real shape so nothing gets cropped:
+// wide photos (16:9) span both columns, tall or square ones (9:16, 3:4, 1:1) take one column
+// and pair up side by side. A tall photo left without a partner is centered on its own row.
+const WIDE_RATIO = 1.1;
 
 // Decorations. Add more Paw Patrol images to img/ and list them here.
 export const STICKERS = [
@@ -48,13 +38,26 @@ function decorImg(src, className) {
   return img;
 }
 
+// Gives the frame the photo's aspect ratio and re-pairs the tall photos on its page.
+function fitShot(media, width, height) {
+  const shot = media.closest('.shot');
+  if (!shot || !width || !height) return;
+  shot.style.setProperty('--ratio', `${width} / ${height}`);
+  shot.classList.toggle('is-wide', width / height > WIDE_RATIO);
+  const narrow = [...shot.parentElement.children].filter((node) => !node.classList.contains('is-wide'));
+  narrow.forEach((node, i) => node.classList.toggle('is-solo', narrow.length % 2 === 1 && i === narrow.length - 1));
+}
+
 function videoEl(item) {
   // #t=0.1 makes most browsers show the first frame instead of a black box
   const video = el('video', 'media', { preload: 'metadata', 'aria-hidden': 'true' });
   video.muted = true;
   video.playsInline = true;
   video.src = `${item.full}#t=0.1`;
-  video.addEventListener('loadeddata', () => video.closest('.shot, .cover')?.classList.add('loaded'), { once: true });
+  video.addEventListener('loadeddata', () => {
+    fitShot(video, video.videoWidth, video.videoHeight);
+    video.closest('.shot, .cover')?.classList.add('loaded');
+  }, { once: true });
   return video;
 }
 
@@ -63,7 +66,10 @@ function videoEl(item) {
 function mediaEl(item, t, { preferFull = false } = {}) {
   if (item.kind === 'video' && !item.thumb) return videoEl(item);
   const img = el('img', 'media', { alt: t(item.kind === 'video' ? 'album.videoLabel' : 'album.photoAlt'), loading: 'lazy', decoding: 'async' });
-  img.addEventListener('load', () => img.closest('.shot, .cover')?.classList.add('loaded'));
+  img.addEventListener('load', () => {
+    fitShot(img, img.naturalWidth, img.naturalHeight);
+    img.closest('.shot, .cover')?.classList.add('loaded');
+  });
   img.addEventListener('error', () => {
     if (item.kind === 'video') img.replaceWith(videoEl(item));
     else if (img.src !== item.full) img.src = item.full;
@@ -72,8 +78,8 @@ function mediaEl(item, t, { preferFull = false } = {}) {
   return img;
 }
 
-function shotButton(item, index, shape, t, onOpen) {
-  const button = el('button', `shot shape-${shape}`, { type: 'button', 'aria-label': `${t('album.open')}: ${t(item.kind === 'video' ? 'album.videoLabel' : 'album.photoAlt')}` });
+function shotButton(item, index, t, onOpen) {
+  const button = el('button', 'shot', { type: 'button', 'aria-label': `${t('album.open')}: ${t(item.kind === 'video' ? 'album.videoLabel' : 'album.photoAlt')}` });
   button.append(mediaEl(item, t));
   if (item.kind === 'video') button.append(textEl('span', 'play', '▶'));
   button.addEventListener('click', () => onOpen(index));
@@ -87,14 +93,13 @@ function renderCover(t) {
 }
 
 function renderPage(pageItems, startIndex, pageNumber, t, onOpen) {
-  const shapes = pageItems.length < PER_PAGE ? SHORT_LAYOUTS[pageItems.length] : LAYOUTS[(pageNumber - 2) % LAYOUTS.length];
   const page = el('article', 'page');
 
   const head = el('header', 'page-head');
   head.append(textEl('h3', 'page-title', t(`album.headline.${(pageNumber - 2) % HEADLINE_COUNT}`)));
 
   const grid = el('div', 'page-grid');
-  pageItems.forEach((item, i) => grid.append(shotButton(item, startIndex + i, shapes[i], t, onOpen)));
+  pageItems.forEach((item, i) => grid.append(shotButton(item, startIndex + i, t, onOpen)));
 
   const foot = el('footer', 'page-foot');
   foot.append(textEl('span', '', t('album.pageFooter')), textEl('span', 'page-number', t('album.page', { n: pageNumber })));

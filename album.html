@@ -23,7 +23,6 @@
       --ink: #12306b;
       --display: "Luckiest Guy", "Trebuchet MS", system-ui, sans-serif;
       --body: "Baloo 2", "Trebuchet MS", system-ui, sans-serif;
-      --row: clamp(96px, 17vw, 150px);
     }
     * { box-sizing: border-box; }
     body {
@@ -212,8 +211,8 @@
     .page-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      grid-auto-rows: var(--row);
-      grid-auto-flow: dense;
+      grid-auto-flow: row dense;
+      align-items: center;
       gap: 12px;
     }
     .shot {
@@ -230,10 +229,9 @@
     .shot:nth-child(odd) { --tilt: -1deg; }
     .shot:nth-child(3n) { --tilt: 1.2deg; }
     .shot:hover, .shot:focus-visible { transform: rotate(0) scale(1.03); box-shadow: 0 10px 22px rgba(13, 63, 158, 0.35); z-index: 1; }
-    .shot .media { border-radius: 2px; }
-    .shape-big { grid-column: span 2; grid-row: span 2; }
-    .shape-wide { grid-column: span 2; }
-    .shape-tall { grid-row: span 2; }
+    .shot .media { border-radius: 2px; height: auto; aspect-ratio: var(--ratio, 3 / 4); }
+    .shot.is-wide { grid-column: span 2; }
+    .shot.is-solo { grid-column: span 2; justify-self: center; width: 60%; }
     .play {
       position: absolute;
       left: 50%;
@@ -413,6 +411,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="i18n.js?v=10"></script>
-  <script type="module" src="album.js?v=8"></script>
+  <script type="module" src="album.js?v=9"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 import { SUPABASE_URL, SUPABASE_ANON_KEY, isSupabaseConfigured } from './supabase-config.js?v=1';
 import { createSupabaseSource, createDemoSource } from './album-sources.js?v=5';
-import { renderMagazine } from './album-magazine.js?v=4';
+import { renderMagazine } from './album-magazine.js?v=5';
 import { createViewer } from './album-viewer.js';
 
 const { t, tn, onChange } = window.I18N;
