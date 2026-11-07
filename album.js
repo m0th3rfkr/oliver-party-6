@@ -1,7 +1,7 @@
 import { SUPABASE_URL, SUPABASE_ANON_KEY, isSupabaseConfigured } from './supabase-config.js?v=1';
 import { createSupabaseSource, createDemoSource } from './album-sources.js?v=5';
 import { renderMagazine } from './album-magazine.js?v=5';
-import { createViewer } from './album-viewer.js';
+import { createViewer } from './album-viewer.js?v=2';
 
 const { t, tn, onChange } = window.I18N;
 
@@ -27,7 +27,6 @@ const viewer = createViewer({
   close: byId('close'),
   prev: byId('prev'),
   next: byId('next'),
-  download: byId('download'),
   position: byId('position'),
 }, () => state.items);
 

@@ -48,7 +48,6 @@ export function createViewer(els, getItems) {
       const ahead = items[(state.index + 1) % total];
       if (ahead && ahead.kind === 'photo') new Image().src = ahead.full;
     }
-    els.download.href = item.save;
     els.position.textContent = `${state.index + 1} / ${total}`;
     scheduleNext(item);
   }
